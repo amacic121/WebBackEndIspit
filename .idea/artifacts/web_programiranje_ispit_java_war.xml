@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="web-programiranje-ispit-java:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>web-programiranje-ispit-java</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="web-programiranje-ispit-java-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="web-programiranje-ispit-java:war exploded" />
+    </root>
+  </artifact>
+</component>
