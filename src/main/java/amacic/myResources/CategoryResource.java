@@ -49,6 +49,12 @@ public class CategoryResource {
     public Category findCategoryByPost(long postId){
         return this.categoryService.findCategoryByPostId(postId);
     }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/findCategoryNumber")
+    public int findCategoryNumber() {return this.categoryService.findCategoryNumber();
+    }
 }
 
 

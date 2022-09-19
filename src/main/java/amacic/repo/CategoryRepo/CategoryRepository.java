@@ -14,4 +14,6 @@ public interface CategoryRepository {
     public void deleteCategory(long categoryId);
 
     public Category findCategoryByPostId(long postId);
+
+    public int getPages();
 }

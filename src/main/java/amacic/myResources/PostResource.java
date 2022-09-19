@@ -39,7 +39,8 @@ public class PostResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/getPostById")
-    public Post getPostById(@QueryParam("postId") long postId) {
+    public Post getPostById(@QueryParam("postId") long postId)
+    {
         return this.postService.getPostById(postId);
     }
 

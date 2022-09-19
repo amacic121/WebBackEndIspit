@@ -7,10 +7,7 @@ import amacic.exceptions.ValidationException;
 import amacic.data.Category;
 import amacic.repo.APostgreSql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,6 +122,8 @@ public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepo
         return categories;
     }
 
+
+
     @Override
     public Category findCategoryByPostId(long postId) {
         long categoryId;
@@ -163,6 +162,36 @@ public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepo
         }
         return category;
     }
+
+    @Override
+    public int getPages() {
+
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        int rows = 0;
+        try {
+            connection = this.newConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT COUNT(*) FROM category");
+            resultSet.next();
+            rows = resultSet.getInt("count");
+
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+
+        return rows;
+    }
+
 
     @Override
     public void deleteCategory(long categoryId) {

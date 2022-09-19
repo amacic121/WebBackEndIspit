@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+
 public class PostRepositoryImplA extends APostgreSql implements PostRepository {
 
     @Override
@@ -104,8 +105,10 @@ public class PostRepositoryImplA extends APostgreSql implements PostRepository {
     @Override
     public List<Post> listAllPosts(int offset, int limit) {
         List<Post> posts = new ArrayList<>();
-        int postId = 1, postTitle = 2, postText = 3, postAuthor = 4, postCreatedAt = 5, postNumberOfVisits = 6,
-                tagValue = 9, categoryId = 10, categoryName = 11, categoryDescription = 12;
+
+        int postTitle = 1, postText = 2, postAuthor = 3, postCreatedAt = 4, postNumberOfVisits = 5,
+                postId = 6, categoryId = 7, tagId = 8, tagValue = 9, categoryName = 10, categoryDescription = 11;
+
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -131,7 +134,7 @@ public class PostRepositoryImplA extends APostgreSql implements PostRepository {
             Map<Long, List<String>> postTags = new HashMap<>();
 
             while (resultSet.next()) {
-                long currentPostId = resultSet.getLong(postId);
+                long currentPostId = resultSet.getLong("id");
 
                 if (!postTags.containsKey(currentPostId)) {
                     ArrayList<String> listOfTags = new ArrayList<>();
@@ -166,7 +169,7 @@ public class PostRepositoryImplA extends APostgreSql implements PostRepository {
 
     @Override
     public List<Post> listPostsByText(int offset, int limit, String text) {
-        int postId = 1, postTitle = 2, postText = 3, postAuthor = 4, postCreatedAt = 5, postNumberOfVisits = 6;
+        int postId = 6, postTitle = 1, postText = 2, postAuthor = 3, postCreatedAt = 4, postNumberOfVisits = 5;
         List<Post> posts = new ArrayList<>();
 
         Connection connection = null;
@@ -199,7 +202,7 @@ public class PostRepositoryImplA extends APostgreSql implements PostRepository {
 
     @Override
     public List<Post> listPostsByTag(int offset, int limit, String tagValue) {
-        int postId = 1, postTitle = 2, postText = 3, postAuthor = 4, postCreatedAt = 5, postNumberOfVisits = 6;
+        int postId = 6, postTitle = 1, postText = 2, postAuthor = 3, postCreatedAt = 4, postNumberOfVisits = 5;
         List<Post> posts = new ArrayList<>();
         Tag tag;
 
@@ -254,6 +257,10 @@ public class PostRepositoryImplA extends APostgreSql implements PostRepository {
         try {
             connection = this.newConnection();
 
+            preparedStatement = connection.prepareStatement("DELETE FROM post_tag where post_id = ?");
+            preparedStatement.setLong(1, postId);
+            preparedStatement.executeUpdate();
+
             preparedStatement = connection.prepareStatement("DELETE FROM post where id = ?");
             preparedStatement.setLong(1, postId);
             preparedStatement.executeUpdate();
@@ -269,7 +276,7 @@ public class PostRepositoryImplA extends APostgreSql implements PostRepository {
     @Override
     public Post getPostById(long postId) {
         Post post = null;
-        int postIdNum = 1, postTitle = 2, postText = 3, postAuthor = 4, postCreatedAt = 5, postNumberOfVisits = 6;
+        int postIdNum = 6, postTitle = 1, postText = 2, postAuthor = 3, postCreatedAt = 4, postNumberOfVisits = 5;
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -280,6 +287,7 @@ public class PostRepositoryImplA extends APostgreSql implements PostRepository {
             preparedStatement = connection.prepareStatement("SELECT * FROM post WHERE id = ?");
             preparedStatement.setLong(1, postId);
             resultSet = preparedStatement.executeQuery();
+
 
             if (resultSet.next()){
                 post = new Post(resultSet.getLong(postIdNum), resultSet.getString(postTitle), resultSet.getString(postText),

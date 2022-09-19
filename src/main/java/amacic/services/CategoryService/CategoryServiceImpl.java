@@ -32,4 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
         return this.categoryRepository.findCategoryByPostId(postId);
     }
 
+    @Override
+    public int findCategoryNumber() {
+        return this.categoryRepository.getPages();
+    }
+
 }
