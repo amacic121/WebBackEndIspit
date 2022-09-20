@@ -1,5 +1,6 @@
 package amacic.repo.CategoryRepo;
 
+import amacic.data.Post;
 import amacic.exceptions.NotFoundException;
 import amacic.exceptions.ObjectExistsException;
 import amacic.exceptions.UnknownException;
@@ -9,6 +10,7 @@ import amacic.repo.APostgreSql;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepository {
@@ -95,7 +97,9 @@ public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepo
 
     @Override
     public List<Category> listAllCategories(int offset, int limit) {
+        int postId = 6, postTitle = 1, postText = 2, postAuthor = 3, postCreatedAt = 4, postNumberOfVisits = 5;
         List<Category> categories = new ArrayList<>();
+        List<Post> posts = new ArrayList<>();
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -112,6 +116,22 @@ public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepo
                 categories.add(new Category(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"), null));
             }
 
+            for (Category category : categories) {
+                preparedStatement = connection.prepareStatement("SELECT * FROM post WHERE category_id = ?");
+                preparedStatement.setLong(1, category.getId());
+                resultSet = preparedStatement.executeQuery();
+
+                while (resultSet.next()) {
+                    posts.add(new Post(resultSet.getLong(postId), resultSet.getString(postTitle), resultSet.getString(postText),
+                            resultSet.getString(postAuthor), resultSet.getLong(postCreatedAt),
+                            resultSet.getLong(postNumberOfVisits), null, null, null));
+                }
+
+                List<Post> postsTemp = new ArrayList<>(posts);
+                category.setPosts(postsTemp);
+                posts.removeAll(posts);
+            }
+
         } catch (Exception e) {
             throw new UnknownException();
         } finally {
@@ -121,7 +141,6 @@ public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepo
         }
         return categories;
     }
-
 
 
     @Override
@@ -139,9 +158,9 @@ public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepo
             preparedStatement.setLong(1, postId);
             resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 categoryId = resultSet.getLong(1);
-            }else {
+            } else {
                 throw new NotFoundException("No post with id: " + postId);
             }
 
@@ -179,10 +198,9 @@ public class CategoryRepositoryImplA extends APostgreSql implements CategoryRepo
             rows = resultSet.getInt("count");
 
 
-
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             this.closeStatement(statement);
             this.closeResultSet(resultSet);
             this.closeConnection(connection);
